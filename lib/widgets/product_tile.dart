@@ -20,6 +20,7 @@ class _ProductTileState extends State<ProductTile> {
   late String userPass;
   late String userName;
   late Query dbRef;
+  bool isLiked = false;
 
   @override
   void initState() {
@@ -132,7 +133,6 @@ class _ProductTileState extends State<ProductTile> {
               ),
               Positioned(
                 child: LikeButton(
-                  isLiked: false,
                   size: 30,
                   bubblesColor: BubblesColor(
                       dotPrimaryColor: Colors.grey.shade100,

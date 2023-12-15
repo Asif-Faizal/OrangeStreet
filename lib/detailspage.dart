@@ -1,7 +1,6 @@
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
-import 'package:like_button/like_button.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shop/models/product.dart';
 import 'package:shop/widgets/appbar.dart';
@@ -21,6 +20,8 @@ class _DetailsPageState extends State<DetailsPage> {
   late String userEmail;
   late String userPass;
   late String userName;
+  bool _isFilled = false;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -64,16 +65,69 @@ class _DetailsPageState extends State<DetailsPage> {
                 Positioned(
                   right: 15,
                   bottom: 15,
-                  child: LikeButton(
-                    isLiked: false,
-                    size: 30,
-                    bubblesColor: BubblesColor(
-                        dotPrimaryColor: Colors.grey.shade100,
-                        dotSecondaryColor: Colors.deepOrange,
-                        dotThirdColor: Colors.blue,
-                        dotLastColor: Colors.green),
-                    circleColor: CircleColor(
-                        start: Colors.grey.shade100, end: Colors.deepOrange),
+                  child: IconButton(
+                    splashRadius: 2,
+                    onPressed: () async {
+                      setState(() async {
+                        if (_isFilled) {
+                          final database = FirebaseDatabase.instance.refFromURL(
+                              'https://orange-street-default-rtdb.firebaseio.com/');
+                          database
+                              .child('Users')
+                              .child(userName)
+                              .child('WishList')
+                              . /*child(path)*/ remove();
+                          _isFilled = false;
+                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                            backgroundColor: Colors.red,
+                            behavior: SnackBarBehavior.floating,
+                            content: Text(
+                                '${widget.product.name} removed from WishList'),
+                          ));
+                        } else {
+                          final SharedPreferences prefs =
+                              await SharedPreferences.getInstance();
+                          setState(() {
+                            userName = prefs.getString('user_name') ?? '';
+                          });
+                          final DatabaseReference database =
+                              FirebaseDatabase.instance.refFromURL(
+                                  'https://orange-street-default-rtdb.firebaseio.com/');
+                          final model = Product(
+                              name: widget.product.name,
+                              discount: widget.product.discount,
+                              price: widget.product.price,
+                              description: widget.product.description,
+                              imagePath1: widget.product.imagePath1,
+                              imagePath2: widget.product.imagePath2,
+                              imagePath3: widget.product.imagePath3,
+                              imagePath4: widget.product.imagePath4);
+                          database
+                              .child('Users')
+                              .child(userName)
+                              .child("WishList")
+                              .push()
+                              .set(model.toJson());
+                          _isFilled = true;
+                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                            behavior: SnackBarBehavior.floating,
+                            backgroundColor: Colors.green,
+                            content: Text(
+                                '${widget.product.name} added to WishList'),
+                          ));
+                        }
+                        // _isFilled = !_isFilled;
+                      });
+                    },
+                    icon: _isFilled
+                        ? const Icon(
+                            Icons.favorite,
+                            color: Colors.red,
+                          )
+                        : const Icon(
+                            Icons.favorite_border,
+                            color: Colors.red,
+                          ),
                   ),
                 )
               ],

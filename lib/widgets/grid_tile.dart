@@ -18,16 +18,6 @@ class _GridProductTileState extends State<GridProductTile> {
   @override
   void initState() {
     super.initState();
-    isLiked = false;
-  }
-
-  Future<bool?> handleWishlist() async {
-    setState(() {
-      isLiked = !isLiked;
-      if (isLiked) {
-      } else {}
-    });
-    return Future.value(isLiked);
   }
 
   @override
@@ -95,10 +85,6 @@ class _GridProductTileState extends State<GridProductTile> {
             right: 15,
             top: 15,
             child: LikeButton(
-              isLiked: false,
-              onTap: (bool isLiked) async {
-                return handleWishlist();
-              },
               size: 20,
               bubblesColor: BubblesColor(
                   dotPrimaryColor: Colors.grey.shade100,
