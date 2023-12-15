@@ -35,8 +35,8 @@ class _NotificationScreenState extends State<NotificationScreen> {
               ),
               GestureDetector(
                   onTap: () {
-                    Navigator.push(context,
-                        MaterialPageRoute(builder: (context) => Wishlist()));
+                    // Navigator.push(context,
+                    //     MaterialPageRoute(builder: (context) => Wishlist()));
                   },
                   child: Icon(
                     Icons.favorite,
@@ -47,8 +47,8 @@ class _NotificationScreenState extends State<NotificationScreen> {
               ),
               GestureDetector(
                   onTap: () {
-                    Navigator.push(context,
-                        MaterialPageRoute(builder: (context) => Cart()));
+                    // Navigator.push(context,
+                    //     MaterialPageRoute(builder: (context) => Cart()));
                   },
                   child: Icon(
                     Icons.shopping_bag_rounded,

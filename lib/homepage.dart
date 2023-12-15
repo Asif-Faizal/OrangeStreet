@@ -1,3 +1,4 @@
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:shop/cart.dart';
 import 'package:shop/homepagelayout.dart';
@@ -5,8 +6,21 @@ import 'package:shop/notification.dart';
 import 'package:shop/widgets/drawer.dart';
 import 'package:shop/wishlist.dart';
 
-class HomePage extends StatelessWidget {
+class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
+
+  @override
+  State<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  late DatabaseReference initdbRef;
+
+  @override
+  void initState() {
+    super.initState();
+    initdbRef = FirebaseDatabase.instance.ref();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -24,7 +38,8 @@ class HomePage extends StatelessWidget {
                 flex: 5,
                 child: Text(
                   'orange street'.toUpperCase(),
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+                  style: const TextStyle(
+                      fontWeight: FontWeight.bold, fontSize: 20),
                 ),
               ),
               _buildIconButton(
@@ -32,19 +47,27 @@ class HomePage extends StatelessWidget {
                 icon: Icons.notifications,
               ),
               _buildIconButton(
-                onPressed: () => _navigateTo(context, Wishlist()),
+                onPressed: () => _navigateTo(
+                    context,
+                    Wishlist(
+                      initdbRef: initdbRef,
+                    )),
                 icon: Icons.favorite,
               ),
               _buildIconButton(
-                onPressed: () => _navigateTo(context, Cart()),
+                onPressed: () => _navigateTo(
+                    context,
+                    Cart(
+                      initdbRef: initdbRef,
+                    )),
                 icon: Icons.shopping_bag,
               ),
             ],
           ),
         ),
       ),
-      body: SingleChildScrollView(child: HomeLayout()),
-      drawer: MyDrawer(),
+      body: const SingleChildScrollView(child: HomeLayout()),
+      drawer: const MyDrawer(),
     );
   }
 
