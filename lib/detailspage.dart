@@ -182,13 +182,6 @@ class _DetailsPageState extends State<DetailsPage> {
                       behavior: SnackBarBehavior.floating,
                       backgroundColor: Colors.green,
                       content: Text('${widget.product.name} added to Cart')));
-                  SharedPreferences prefs =
-                      await SharedPreferences.getInstance();
-                  setState(() {
-                    userName = prefs.getString('user_name') ?? '';
-                    userEmail = prefs.getString('user_email') ?? '';
-                    userPass = prefs.getString('user_pass') ?? '';
-                  });
                   final DatabaseReference database = FirebaseDatabase.instance
                       .refFromURL(
                           'https://orange-street-default-rtdb.firebaseio.com/');
@@ -207,6 +200,8 @@ class _DetailsPageState extends State<DetailsPage> {
                       .child("CartItem")
                       .push()
                       .set(model.toJson());
+                  print(
+                      "$userName 11111111111111111111111111111111111111111111111");
                 },
                 child: Row(
                   children: [

@@ -1,7 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shop/homepage.dart';
 import 'package:shop/login.dart';
 import 'package:shop/models/user.dart';
@@ -25,10 +24,10 @@ class _SignupState extends State<Signup> {
     final auth = FirebaseAuth.instance;
     auth.createUserWithEmailAndPassword(
         email: _emailController.text, password: _confirmpassController.text);
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.setString('user_name', _usernameController.text);
-    prefs.setString('user_email', _emailController.text);
-    prefs.setString('user_pass', _passwordController.text);
+    // SharedPreferences prefs = await SharedPreferences.getInstance();
+    // prefs.setString('user_name', _usernameController.text);
+    // prefs.setString('user_email', _emailController.text);
+    // prefs.setString('user_pass', _passwordController.text);
     final DatabaseReference database = FirebaseDatabase.instance
         .refFromURL('https://orange-street-default-rtdb.firebaseio.com/');
     final model = Users(
@@ -105,6 +104,15 @@ class _SignupState extends State<Signup> {
   bool _isValidPassword(String password) {
     // Minimum password length validation
     return password.length >= 6;
+  }
+
+  @override
+  void dispose() {
+    _emailController.dispose();
+    _usernameController.dispose();
+    _passwordController.dispose();
+    _confirmpassController.dispose();
+    super.dispose();
   }
 
   @override

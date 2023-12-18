@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shop/login.dart';
+import 'package:shop/my_orders.dart';
 
 class MyDrawer extends StatelessWidget {
   const MyDrawer({Key? key}) : super(key: key);
@@ -19,76 +20,190 @@ class MyDrawer extends StatelessWidget {
 
   Widget _buildDrawerHeader(BuildContext context) {
     return GestureDetector(
-      onTap: () {
-        Navigator.pop(context);
-      },
-      child: UserAccountsDrawerHeader(
-        decoration: BoxDecoration(
-          color: Colors.white,
-        ),
-        accountName: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Text(
-            'Asif Faizal'.toUpperCase(),
-            style: TextStyle(
-              color: Colors.black,
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-        ),
-        currentAccountPicture: CircleAvatar(
-          radius: 100,
-          backgroundImage: AssetImage('lib/assets/torso.jpg'),
-        ),
-        accountEmail: null,
-      ),
-    );
-  }
-
-  Widget _buildDrawerItem({
-    required BuildContext context,
-    required String title,
-    required IconData icon,
-  }) {
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: ListTile(
-        leading: Icon(icon),
-        title: Text(
-          title,
-          style: TextStyle(
-            color: Colors.deepOrange,
-            fontWeight: FontWeight.bold,
-            fontSize: 16,
-          ),
-        ),
         onTap: () {
-          if (title == 'LOGOUT') {
-            _signOut(context);
-            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                behavior: SnackBarBehavior.floating,
-                backgroundColor: Colors.red,
-                content: Text(
-                  'Logged Out Succesfully',
-                )));
-          } else {}
+          Navigator.pop(context);
         },
-      ),
-    );
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 10),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              CircleAvatar(
+                backgroundColor: Colors.deepOrange,
+                radius: 60,
+              ),
+              Container(
+                child: Column(
+                  children: [
+                    Text(
+                      'userName',
+                      style: TextStyle(fontSize: 20),
+                    ),
+                    SizedBox(
+                      height: 15,
+                    ),
+                    Text('userMail')
+                  ],
+                ),
+              ),
+              SizedBox(
+                width: 10,
+              )
+            ],
+          ),
+        ));
   }
 
   @override
   Widget build(BuildContext context) {
     return Drawer(
+      backgroundColor: Colors.deepOrange.shade50,
       child: ListView(
         padding: EdgeInsets.all(0),
         children: [
           _buildDrawerHeader(context),
-          _buildDrawerItem(
-            context: context,
-            title: 'LOGOUT',
-            icon: Icons.logout,
+          SizedBox(
+            height: 20,
+          ),
+          GestureDetector(
+            onTap: () {
+              _signOut(context);
+              ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                  behavior: SnackBarBehavior.floating,
+                  backgroundColor: Colors.red,
+                  content: Text(
+                    'Logged Out Succesfully',
+                  )));
+            },
+            child: Container(
+              padding: EdgeInsets.all(15),
+              decoration: BoxDecoration(
+                  border: Border(
+                      top: BorderSide(color: Colors.deepOrange, width: 0.5))),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  Expanded(
+                    flex: 3,
+                    child: Text(
+                      'Log Out',
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ),
+                  Icon(Icons.outbox_rounded)
+                ],
+              ),
+            ),
+          ),
+          GestureDetector(
+            onTap: () {
+              Navigator.push(
+                  context, MaterialPageRoute(builder: (context) => MyOrders()));
+            },
+            child: Container(
+              padding: EdgeInsets.all(15),
+              decoration: BoxDecoration(
+                  border: Border(
+                      top: BorderSide(color: Colors.deepOrange, width: 0.5))),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  Expanded(
+                    flex: 3,
+                    child: Text(
+                      'My Orders',
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ),
+                  Icon(Icons.delivery_dining_rounded)
+                ],
+              ),
+            ),
+          ),
+          GestureDetector(
+            onTap: () {},
+            child: Container(
+              padding: EdgeInsets.all(15),
+              decoration: BoxDecoration(
+                  border: Border(
+                top: BorderSide(color: Colors.deepOrange, width: 0.5),
+              )),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  Expanded(
+                    flex: 3,
+                    child: Text(
+                      'Orders History',
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ),
+                  Icon(Icons.timelapse)
+                ],
+              ),
+            ),
+          ),
+          GestureDetector(
+            onTap: () {},
+            child: Container(
+              padding: EdgeInsets.all(15),
+              decoration: BoxDecoration(
+                  border: Border(
+                      top: BorderSide(color: Colors.deepOrange, width: 0.5),
+                      bottom:
+                          BorderSide(color: Colors.deepOrange, width: 0.5))),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  Expanded(
+                    flex: 3,
+                    child: Text(
+                      'About Us',
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ),
+                  Icon(Icons.info_outline_rounded)
+                ],
+              ),
+            ),
+          ),
+          GestureDetector(
+            onTap: () {},
+            child: Container(
+              padding: EdgeInsets.all(15),
+              decoration: BoxDecoration(
+                  border: Border(
+                      bottom:
+                          BorderSide(color: Colors.deepOrange, width: 0.5))),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  Expanded(
+                    flex: 3,
+                    child: Text(
+                      'Feed Back',
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ),
+                  Icon(Icons.message_outlined)
+                ],
+              ),
+            ),
           ),
         ],
       ),

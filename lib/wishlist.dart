@@ -6,8 +6,7 @@ import 'package:shop/cart.dart';
 import 'package:shop/widgets/drawer.dart';
 
 class Wishlist extends StatefulWidget {
-  final DatabaseReference initdbRef;
-  const Wishlist({Key? key, required this.initdbRef}) : super(key: key);
+  const Wishlist({Key? key}) : super(key: key);
 
   @override
   State<Wishlist> createState() => _WishlistState();
@@ -33,7 +32,11 @@ class _WishlistState extends State<Wishlist> {
   }
 
   void databaseRef() {
-    dbRef = widget.initdbRef.child('Users').child(userName).child('WishList');
+    dbRef = FirebaseDatabase.instance
+        .ref()
+        .child('Users')
+        .child(userName)
+        .child('WishList');
   }
 
   @override
@@ -63,8 +66,8 @@ class _WishlistState extends State<Wishlist> {
                 side: const BorderSide(width: 3, color: Colors.white),
               ),
               onPressed: () {
-                //   Navigator.push(
-                //       context, MaterialPageRoute(builder: (context) => Cart(initdbRef: dbRef,)));
+                Navigator.push(
+                    context, MaterialPageRoute(builder: (context) => Cart()));
               },
               child: const Padding(
                 padding: EdgeInsets.symmetric(vertical: 8, horizontal: 40),

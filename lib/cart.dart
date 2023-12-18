@@ -28,16 +28,13 @@ class CartItem {
 }
 
 class Cart extends StatefulWidget {
-  final DatabaseReference initdbRef;
-  const Cart({Key? key, required this.initdbRef}) : super(key: key);
+  const Cart({Key? key}) : super(key: key);
 
   @override
   State<Cart> createState() => _CartState();
 }
 
 class _CartState extends State<Cart> {
-  late String userEmail;
-  late String userPass;
   late String userName;
   late DatabaseReference dbRef;
 
@@ -74,11 +71,11 @@ dbRef.onValue.listen((event) {
       userName = prefs.getString('user_name') ?? '';
       prefs.setString('total_price', totalPrice as String);
     });
-    databaseRef();
-  }
-
-  void databaseRef() {
-    dbRef = widget.initdbRef.child('Users').child(userName).child('CartItem');
+    dbRef = FirebaseDatabase.instance
+        .ref()
+        .child('Users')
+        .child(userName)
+        .child('CartItem');
   }
 
   @override
@@ -92,15 +89,12 @@ dbRef.onValue.listen((event) {
         title: const Text('Shopping Cart'),
         actions: [
           GestureDetector(
-            // onTap: () {
-            //   Navigator.push(
-            //     context,
-            //     MaterialPageRoute(
-            //         builder: (context) => Wishlist(
-            //               initdbRef: dbRef,
-            //             )),
-            //   );
-            // },
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => Wishlist()),
+              );
+            },
             child: const Icon(Icons.favorite),
           ),
           const SizedBox(

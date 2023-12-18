@@ -14,14 +14,14 @@ class Login extends StatefulWidget {
 }
 
 class _LoginState extends State<Login> {
-  TextEditingController _usernameController = TextEditingController();
+  TextEditingController _emailController = TextEditingController();
   TextEditingController _passwordController = TextEditingController();
   void _login() async {
     final auth = FirebaseAuth.instance;
 
     try {
       await auth.signInWithEmailAndPassword(
-          email: _usernameController.text, password: _passwordController.text);
+          email: _emailController.text, password: _passwordController.text);
 
       User? user = auth.currentUser;
       if (user != null) {
@@ -38,7 +38,7 @@ class _LoginState extends State<Login> {
       print(e.toString());
     }
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.setString('user_email', _usernameController.text);
+    prefs.setString('user_email', _emailController.text);
   }
 
   void showSnackBar(String message, Color color) {
@@ -73,7 +73,7 @@ class _LoginState extends State<Login> {
             CustomTextField(
               prefixIcon: Icons.mail,
               hintText: "Email",
-              controller: _usernameController,
+              controller: _emailController,
             ),
             SizedBox(
               height: 30,

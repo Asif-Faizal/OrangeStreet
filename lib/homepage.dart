@@ -1,4 +1,3 @@
-import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:shop/cart.dart';
 import 'package:shop/homepagelayout.dart';
@@ -14,12 +13,9 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  late DatabaseReference initdbRef;
-
   @override
   void initState() {
     super.initState();
-    initdbRef = FirebaseDatabase.instance.ref();
   }
 
   @override
@@ -47,19 +43,11 @@ class _HomePageState extends State<HomePage> {
                 icon: Icons.notifications,
               ),
               _buildIconButton(
-                onPressed: () => _navigateTo(
-                    context,
-                    Wishlist(
-                      initdbRef: initdbRef,
-                    )),
+                onPressed: () => _navigateTo(context, Wishlist()),
                 icon: Icons.favorite,
               ),
               _buildIconButton(
-                onPressed: () => _navigateTo(
-                    context,
-                    Cart(
-                      initdbRef: initdbRef,
-                    )),
+                onPressed: () => _navigateTo(context, Cart()),
                 icon: Icons.shopping_bag,
               ),
             ],
