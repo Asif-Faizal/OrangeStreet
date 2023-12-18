@@ -57,7 +57,7 @@ class MyDrawer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Drawer(
-      backgroundColor: Colors.deepOrange.shade50,
+      backgroundColor: Colors.grey.shade100,
       child: ListView(
         padding: EdgeInsets.all(0),
         children: [
@@ -76,10 +76,10 @@ class MyDrawer extends StatelessWidget {
                   )));
             },
             child: Container(
-              padding: EdgeInsets.all(15),
+              padding: EdgeInsets.all(25),
               decoration: BoxDecoration(
                   border: Border(
-                      top: BorderSide(color: Colors.deepOrange, width: 0.5))),
+                      top: BorderSide(color: Colors.deepOrange, width: 0.25))),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
@@ -104,10 +104,10 @@ class MyDrawer extends StatelessWidget {
                   context, MaterialPageRoute(builder: (context) => MyOrders()));
             },
             child: Container(
-              padding: EdgeInsets.all(15),
+              padding: EdgeInsets.all(25),
               decoration: BoxDecoration(
                   border: Border(
-                      top: BorderSide(color: Colors.deepOrange, width: 0.5))),
+                      top: BorderSide(color: Colors.deepOrange, width: 0.25))),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
@@ -129,10 +129,10 @@ class MyDrawer extends StatelessWidget {
           GestureDetector(
             onTap: () {},
             child: Container(
-              padding: EdgeInsets.all(15),
+              padding: EdgeInsets.all(25),
               decoration: BoxDecoration(
                   border: Border(
-                top: BorderSide(color: Colors.deepOrange, width: 0.5),
+                top: BorderSide(color: Colors.deepOrange, width: 0.25),
               )),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -155,12 +155,12 @@ class MyDrawer extends StatelessWidget {
           GestureDetector(
             onTap: () {},
             child: Container(
-              padding: EdgeInsets.all(15),
+              padding: EdgeInsets.all(25),
               decoration: BoxDecoration(
                   border: Border(
-                      top: BorderSide(color: Colors.deepOrange, width: 0.5),
+                      top: BorderSide(color: Colors.deepOrange, width: 0.25),
                       bottom:
-                          BorderSide(color: Colors.deepOrange, width: 0.5))),
+                          BorderSide(color: Colors.deepOrange, width: 0.25))),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
@@ -182,11 +182,11 @@ class MyDrawer extends StatelessWidget {
           GestureDetector(
             onTap: () {},
             child: Container(
-              padding: EdgeInsets.all(15),
+              padding: EdgeInsets.all(25),
               decoration: BoxDecoration(
                   border: Border(
                       bottom:
-                          BorderSide(color: Colors.deepOrange, width: 0.5))),
+                          BorderSide(color: Colors.deepOrange, width: 0.25))),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
