@@ -39,6 +39,7 @@ class _ProductTileState extends State<ProductTile> {
           .child('Users')
           .child(userName)
           .child('CartItem');
+      print('userName');
     });
   }
 
@@ -102,11 +103,11 @@ class _ProductTileState extends State<ProductTile> {
                       SizedBox(height: 10),
                       Button(
                           onPressed: () async {
-                            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                                behavior: SnackBarBehavior.floating,
-                                backgroundColor: Colors.green,
-                                content: Text(
-                                    '${widget.product.name} added to Cart')));
+                            final SharedPreferences prefs =
+                                await SharedPreferences.getInstance();
+                            setState(() {
+                              userName = prefs.getString('user_name') ?? '';
+                            });
                             final DatabaseReference database =
                                 FirebaseDatabase.instance.refFromURL(
                                     'https://orange-street-default-rtdb.firebaseio.com/');
@@ -121,10 +122,16 @@ class _ProductTileState extends State<ProductTile> {
                                 imagePath4: widget.product.imagePath4);
                             database
                                 .child('Users')
-                                .child(userName)
+                                //.child(userName)
                                 .child("CartItem")
                                 .push()
                                 .set(model.toJson());
+                            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                              behavior: SnackBarBehavior.floating,
+                              backgroundColor: Colors.green,
+                              content:
+                                  Text('${widget.product.name} added to Cart'),
+                            ));
                           },
                           child: Text('Add to Cart'))
                     ],

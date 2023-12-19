@@ -67,7 +67,7 @@ class _DetailsPageState extends State<DetailsPage> {
                   bottom: 15,
                   child: IconButton(
                     splashRadius: 2,
-                    onPressed: () async {
+                    onPressed: () {
                       setState(() async {
                         if (_isFilled) {
                           final database = FirebaseDatabase.instance.refFromURL(
@@ -178,10 +178,11 @@ class _DetailsPageState extends State<DetailsPage> {
             Spacer(),
             Button(
                 onPressed: () async {
-                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                      behavior: SnackBarBehavior.floating,
-                      backgroundColor: Colors.green,
-                      content: Text('${widget.product.name} added to Cart')));
+                  final SharedPreferences prefs =
+                      await SharedPreferences.getInstance();
+                  setState(() {
+                    userName = prefs.getString('user_name') ?? '';
+                  });
                   final DatabaseReference database = FirebaseDatabase.instance
                       .refFromURL(
                           'https://orange-street-default-rtdb.firebaseio.com/');
@@ -196,12 +197,15 @@ class _DetailsPageState extends State<DetailsPage> {
                       imagePath4: widget.product.imagePath4);
                   database
                       .child('Users')
-                      .child(userName)
+                      //.child(userName)
                       .child("CartItem")
                       .push()
                       .set(model.toJson());
-                  print(
-                      "$userName 11111111111111111111111111111111111111111111111");
+                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                    behavior: SnackBarBehavior.floating,
+                    backgroundColor: Colors.green,
+                    content: Text('${widget.product.name} added to Cart'),
+                  ));
                 },
                 child: Row(
                   children: [

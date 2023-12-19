@@ -36,7 +36,9 @@ class Cart extends StatefulWidget {
 
 class _CartState extends State<Cart> {
   late String userName;
-  late DatabaseReference dbRef;
+
+  DatabaseReference dbRef =
+      FirebaseDatabase.instance.ref().child('Users').child('CartItem');
 
   int totalPrice = 0;
   int itemPrice = 0;
@@ -58,24 +60,35 @@ dbRef.onValue.listen((event) {
   void initState() {
     super.initState();
     initializeData();
+
+    print('$itemPrice qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq');
+    print('$totalPrice dddddddddddddddddddddddddddddddddddddddddddddddddddddd');
+    //  print('$userName 1111111111111111111111111111111111111111111111111111');
   }
 
   void initializeData() async {
-    print('$itemPrice');
-    print('$totalPrice dddddddddddddddddddddddd');
     setState(() {
+      itemPrice = getStringValuesSF();
       totalPrice += itemPrice;
+      print("object");
     });
+  }
+
+  addStringToSF(
+    int abc,
+  ) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    setState(() {
-      userName = prefs.getString('user_name') ?? '';
-      prefs.setString('total_price', totalPrice as String);
-    });
-    dbRef = FirebaseDatabase.instance
-        .ref()
-        .child('Users')
-        .child(userName)
-        .child('CartItem');
+    totalPrice += abc;
+    prefs.setInt('stringValue', totalPrice);
+    print("$abc lllllllllllllllllllllllllllllllllllllllllllllllllllllllllll");
+    print("$totalPrice mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm");
+  }
+
+  getStringValuesSF() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    //Return String
+    int? stringValue = prefs.getInt('stringValue');
+    return stringValue;
   }
 
   @override
@@ -174,6 +187,7 @@ dbRef.onValue.listen((event) {
 
   Widget listItem({required Map cartitem}) {
     itemPrice = cartitem['price'];
+    addStringToSF(itemPrice);
     print('$itemPrice');
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 0, horizontal: 10),
@@ -250,7 +264,6 @@ dbRef.onValue.listen((event) {
                 DatabaseReference itemRef = FirebaseDatabase.instance
                     .ref()
                     .child('Users')
-                    .child(userName)
                     .child('CartItem/${cartitem['key']}');
                 itemRef.remove();
               },

@@ -16,6 +16,7 @@ class Login extends StatefulWidget {
 class _LoginState extends State<Login> {
   TextEditingController _emailController = TextEditingController();
   TextEditingController _passwordController = TextEditingController();
+  TextEditingController _userNamecontroller = TextEditingController();
   void _login() async {
     final auth = FirebaseAuth.instance;
 
@@ -38,7 +39,9 @@ class _LoginState extends State<Login> {
       print(e.toString());
     }
     SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setString('user_name', _userNamecontroller.text);
     prefs.setString('user_email', _emailController.text);
+    prefs.setString('user_pass', _passwordController.text);
   }
 
   void showSnackBar(String message, Color color) {
@@ -62,6 +65,14 @@ class _LoginState extends State<Login> {
   }
 
   @override
+  void dispose() {
+    _emailController.dispose();
+    _userNamecontroller.dispose();
+    _passwordController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
@@ -70,6 +81,14 @@ class _LoginState extends State<Login> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
+            CustomTextField(
+              prefixIcon: Icons.account_box,
+              hintText: "Email",
+              controller: _userNamecontroller,
+            ),
+            SizedBox(
+              height: 30,
+            ),
             CustomTextField(
               prefixIcon: Icons.mail,
               hintText: "Email",
