@@ -28,7 +28,8 @@ class CartItem {
 }
 
 class Cart extends StatefulWidget {
-  const Cart({Key? key}) : super(key: key);
+  String username;
+  Cart({required this.username});
 
   @override
   State<Cart> createState() => _CartState();
@@ -60,7 +61,11 @@ dbRef.onValue.listen((event) {
   void initState() {
     super.initState();
     initializeData();
-
+    dbRef = FirebaseDatabase.instance
+        .ref()
+        .child('Users')
+        .child(widget.username)
+        .child('CartItem');
     print('$itemPrice qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq');
     print('$totalPrice dddddddddddddddddddddddddddddddddddddddddddddddddddddd');
     //  print('$userName 1111111111111111111111111111111111111111111111111111');

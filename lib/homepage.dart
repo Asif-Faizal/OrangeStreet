@@ -47,7 +47,11 @@ class _HomePageState extends State<HomePage> {
                 icon: Icons.favorite,
               ),
               _buildIconButton(
-                onPressed: () => _navigateTo(context, Cart()),
+                onPressed: () => _navigateTo(
+                    context,
+                    Cart(
+                      username: "1",
+                    )),
                 icon: Icons.shopping_bag,
               ),
             ],

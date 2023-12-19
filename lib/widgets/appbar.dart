@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shop/cart.dart';
 import 'package:shop/wishlist.dart';
 
@@ -9,6 +10,12 @@ class MyAppBar extends StatelessWidget implements PreferredSizeWidget {
 
   @override
   Size get preferredSize => Size.fromHeight(kToolbarHeight);
+  getUser() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    var userName = prefs.getString('user_name') ?? '';
+    print(("$userName LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL"));
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -50,7 +57,10 @@ class MyAppBar extends StatelessWidget implements PreferredSizeWidget {
               onTap: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => Cart()),
+                  MaterialPageRoute(
+                      builder: (context) => Cart(
+                            username: getUser(),
+                          )),
                 );
               },
               child: Icon(

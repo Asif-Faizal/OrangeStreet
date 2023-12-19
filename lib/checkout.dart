@@ -48,10 +48,9 @@ class _CheckoutState extends State<Checkout> {
               hintText: 'Pincode',
               controller: _pincode,
             ),
-            AddressTextfield(
-              hintText: 'State',
-              controller: _state,
-            ),
+            SizedBox(
+              height: 30,
+            )
           ],
         ),
       ),

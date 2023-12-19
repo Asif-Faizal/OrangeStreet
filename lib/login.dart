@@ -83,7 +83,7 @@ class _LoginState extends State<Login> {
           children: [
             CustomTextField(
               prefixIcon: Icons.account_box,
-              hintText: "Email",
+              hintText: "User Name",
               controller: _userNamecontroller,
             ),
             SizedBox(

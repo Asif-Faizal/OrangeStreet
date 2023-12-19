@@ -3,6 +3,8 @@ import 'package:firebase_database/ui/firebase_animated_list.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shop/cart.dart';
+import 'package:shop/models/product.dart';
+import 'package:shop/widgets/button.dart';
 import 'package:shop/widgets/drawer.dart';
 
 class Wishlist extends StatefulWidget {
@@ -39,6 +41,12 @@ class _WishlistState extends State<Wishlist> {
         .child('WishList');
   }
 
+  getUser() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    var username = prefs.getString('user_name') ?? '';
+    print(("$username LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL"));
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -67,7 +75,11 @@ class _WishlistState extends State<Wishlist> {
               ),
               onPressed: () {
                 Navigator.push(
-                    context, MaterialPageRoute(builder: (context) => Cart()));
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => Cart(
+                              username: getUser(),
+                            )));
               },
               child: const Padding(
                 padding: EdgeInsets.symmetric(vertical: 8, horizontal: 40),
@@ -125,10 +137,7 @@ class _WishlistState extends State<Wishlist> {
                           style: const TextStyle(
                               fontSize: 15, fontWeight: FontWeight.bold),
                         ),
-                        Text(likedItem['description']),
-                        const SizedBox(
-                          height: 40,
-                        ),
+                        Spacer(),
                         Text(
                           likedItem['discount'],
                           style: const TextStyle(
@@ -153,6 +162,50 @@ class _WishlistState extends State<Wishlist> {
                             ),
                           ],
                         ),
+                        SizedBox(
+                          height: 20,
+                        ),
+                        Button(
+                            onPressed: () async {
+                              final SharedPreferences prefs =
+                                  await SharedPreferences.getInstance();
+                              setState(() {
+                                userName = prefs.getString('user_name') ?? '';
+                              });
+                              final DatabaseReference database =
+                                  FirebaseDatabase.instance.refFromURL(
+                                      'https://orange-street-default-rtdb.firebaseio.com/');
+                              final model = Product(
+                                  name: likedItem['name'],
+                                  discount: likedItem['discount'],
+                                  price: likedItem['price'],
+                                  description: likedItem['description'],
+                                  imagePath1: likedItem['imagePath1'],
+                                  imagePath2: likedItem['imagePath2'],
+                                  imagePath3: likedItem['imagePath3'],
+                                  imagePath4: likedItem['imagePath4']);
+                              database
+                                  .child('Users')
+                                  .child(userName)
+                                  .child("CartItem")
+                                  .push()
+                                  .set(model.toJson());
+                              DatabaseReference itemRef = FirebaseDatabase
+                                  .instance
+                                  .ref()
+                                  .child('Users')
+                                  .child(userName)
+                                  .child('WishList/${likedItem['key']}');
+                              itemRef.remove();
+                              ScaffoldMessenger.of(context)
+                                  .showSnackBar(SnackBar(
+                                behavior: SnackBarBehavior.floating,
+                                backgroundColor: Colors.green,
+                                content:
+                                    Text('${likedItem['name']} added to Cart'),
+                              ));
+                            },
+                            child: Text('Add to Cart')),
                         const SizedBox(
                           height: 5,
                         )
