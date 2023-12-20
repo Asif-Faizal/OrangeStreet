@@ -1,5 +1,7 @@
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:shop/models/product.dart';
 import 'package:shop/order_placed_animtn.dart';
 import 'package:shop/widgets/appbar.dart';
 import 'package:shop/widgets/textfield.dart';
@@ -8,12 +10,14 @@ class PaymentScreen extends StatefulWidget {
   final String house;
   final String town;
   final String pincode;
+  final int totalAmount;
 
   const PaymentScreen({
     Key? key,
     required this.house,
     required this.town,
     required this.pincode,
+    required this.totalAmount,
   }) : super(key: key);
 
   @override
@@ -21,20 +25,10 @@ class PaymentScreen extends StatefulWidget {
 }
 
 class _PaymentScreenState extends State<PaymentScreen> {
-  late String totalPrice = '';
-
+  late String userName;
   @override
   void initState() {
     super.initState();
-    calculatePrice();
-  }
-
-  Future<void> calculatePrice() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    setState(() {
-      totalPrice = prefs.getString('total_price') ?? '';
-      print(totalPrice);
-    });
   }
 
   @override
@@ -161,22 +155,19 @@ class _PaymentScreenState extends State<PaymentScreen> {
         ),
       ),
       bottomNavigationBar: Container(
-        height: 110,
+        height: 90,
         color: Colors.deepOrange,
         padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 30),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            const SizedBox(
-              height: 10,
-            ),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  '\$$totalPrice',
+                  '\$${widget.totalAmount}',
                   style: const TextStyle(
-                      fontSize: 30,
+                      fontSize: 20,
                       fontWeight: FontWeight.bold,
                       color: Colors.white),
                 ),
@@ -185,20 +176,57 @@ class _PaymentScreenState extends State<PaymentScreen> {
                     foregroundColor: Colors.white,
                     side: const BorderSide(width: 3, color: Colors.white),
                   ),
-                  onPressed: () {
+                  onPressed: () async {
+                    SharedPreferences prefs =
+                        await SharedPreferences.getInstance();
+                    setState(() {
+                      userName = prefs.getString('user_name') ?? '';
+                    });
+                    final DatabaseReference database = FirebaseDatabase.instance
+                        .refFromURL(
+                            'https://orange-street-default-rtdb.firebaseio.com/');
+                    final model = Product(
+                        name: cartitem['name'],
+                        discount: cartitem['discount'],
+                        price: cartitem['price'],
+                        description: cartitem['description'],
+                        imagePath1: cartitem['imagePath1'],
+                        imagePath2: cartitem['imagePath2'],
+                        imagePath3: cartitem['imagePath3'],
+                        imagePath4: cartitem['imagePath4']);
+                    database
+                        .child('Users')
+                        .child(userName)
+                        .child("Orders")
+                        .push()
+                        .set(model.toJson());
+                    DatabaseReference itemRef = FirebaseDatabase.instance
+                        .ref()
+                        .child('Users')
+                        .child(userName)
+                        .child('CartItem/${cartitem['key']}');
+                    itemRef.remove();
                     Navigator.push(
                         context,
                         MaterialPageRoute(
                             builder: (context) => const OrderAnimation()));
                   },
                   child: const Padding(
-                    padding: EdgeInsets.symmetric(vertical: 8, horizontal: 40),
+                    padding: EdgeInsets.symmetric(vertical: 4, horizontal: 40),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text(
-                          'Place Order',
-                          style: TextStyle(fontSize: 24),
+                        Row(
+                          children: [
+                            Text(
+                              'Place Order',
+                              style: TextStyle(fontSize: 20),
+                            ),
+                            SizedBox(
+                              width: 20,
+                            ),
+                            Icon(Icons.done_outline_rounded)
+                          ],
                         ),
                       ],
                     ),

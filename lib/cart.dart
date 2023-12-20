@@ -132,50 +132,33 @@ dbRef.onValue.listen((event) {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             const SizedBox(height: 10),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  '\$$totalPrice',
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                const SizedBox(
-                  width: 20,
-                ),
-                Expanded(
-                  flex: 3,
-                  child: TextButton(
-                    style: TextButton.styleFrom(
-                      foregroundColor: Colors.white,
-                      side: const BorderSide(width: 3, color: Colors.white),
+            TextButton(
+              style: TextButton.styleFrom(
+                foregroundColor: Colors.white,
+                side: const BorderSide(width: 3, color: Colors.white),
+              ),
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => Checkout(
+                            totalPrice: totalPrice,
+                          )),
+                );
+              },
+              child: const Padding(
+                padding: EdgeInsets.symmetric(vertical: 8, horizontal: 40),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      'Checkout',
+                      style: TextStyle(fontSize: 20),
                     ),
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => Checkout()),
-                      );
-                    },
-                    child: const Padding(
-                      padding:
-                          EdgeInsets.symmetric(vertical: 8, horizontal: 40),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            'Checkout',
-                            style: TextStyle(fontSize: 20),
-                          ),
-                          Icon(Icons.shopping_cart),
-                        ],
-                      ),
-                    ),
-                  ),
+                    Icon(Icons.shopping_cart),
+                  ],
                 ),
-              ],
+              ),
             ),
           ],
         ),

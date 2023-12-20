@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shop/homepage.dart';
 import 'package:shop/signup.dart';
 import 'package:shop/widgets/button.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
@@ -159,7 +160,7 @@ class _IntroScreenState extends State<IntroScreen> {
       onPressed: () {
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => const Signup()),
+          MaterialPageRoute(builder: (context) => const HomePage()),
         );
       },
       child: Text(

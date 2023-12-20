@@ -3,6 +3,7 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shop/homepage.dart';
+import 'package:shop/introscreen.dart';
 import 'package:shop/login.dart';
 import 'package:shop/models/user.dart';
 import 'package:shop/widgets/button.dart';
@@ -83,7 +84,7 @@ class _SignupState extends State<Signup> {
       );
       Navigator.push(
         context,
-        MaterialPageRoute(builder: (context) => HomePage()),
+        MaterialPageRoute(builder: (context) => IntroScreen()),
       );
     } else {
       // Show error message if terms are not agreed
@@ -186,9 +187,31 @@ class _SignupState extends State<Signup> {
                     });
                   },
                 ),
-                const Text(
-                  'Agree to Terms and Conditions',
-                  style: TextStyle(fontSize: 12, fontWeight: FontWeight.w400),
+                Row(
+                  children: [
+                    const Text(
+                      'I agree to the  ',
+                      style:
+                          TextStyle(fontSize: 12, fontWeight: FontWeight.w400),
+                    ),
+                    GestureDetector(
+                      onTap: () {
+                        showDialog(
+                          context: context,
+                          builder: (BuildContext context) =>
+                              _buildPopupDialog(context),
+                        );
+                      },
+                      child: const Text(
+                        'Terms and Conditions',
+                        style: TextStyle(
+                            fontSize: 12,
+                            fontWeight: FontWeight.w700,
+                            color: Colors.deepOrange,
+                            decoration: TextDecoration.underline),
+                      ),
+                    ),
+                  ],
                 ),
               ],
             ),
@@ -224,6 +247,36 @@ class _SignupState extends State<Signup> {
           ],
         ),
       ),
+    );
+  }
+
+  Widget _buildPopupDialog(BuildContext context) {
+    return new AlertDialog(
+      title: const Text(
+        'Terms and Conditions',
+        style: TextStyle(fontSize: 16),
+      ),
+      content: new Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Text(
+            "What terms? no terms here",
+            style: TextStyle(fontSize: 13),
+          ),
+        ],
+      ),
+      actions: <Widget>[
+        TextButton(
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
+          child: const Text(
+            'Close',
+            style: TextStyle(color: Colors.deepOrange),
+          ),
+        ),
+      ],
     );
   }
 }
