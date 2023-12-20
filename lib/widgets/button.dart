@@ -21,7 +21,7 @@ class _ButtonState extends State<Button> {
       ),
       onPressed: widget.onPressed,
       child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 40),
+        padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 30),
         child: widget.child,
       ),
     );

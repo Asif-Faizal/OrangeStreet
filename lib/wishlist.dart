@@ -202,10 +202,10 @@ class _WishlistState extends State<Wishlist> {
                                 behavior: SnackBarBehavior.floating,
                                 backgroundColor: Colors.green,
                                 content:
-                                    Text('${likedItem['name']} added to Cart'),
+                                    Text('${likedItem['name']} moved to Cart'),
                               ));
                             },
-                            child: Text('Add to Cart')),
+                            child: Text('Move to Cart')),
                         const SizedBox(
                           height: 5,
                         )

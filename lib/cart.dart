@@ -3,6 +3,8 @@ import 'package:firebase_database/ui/firebase_animated_list.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shop/checkout.dart';
+import 'package:shop/models/product.dart';
+import 'package:shop/widgets/button.dart';
 import 'package:shop/widgets/drawer.dart';
 import 'package:shop/wishlist.dart';
 
@@ -221,7 +223,7 @@ dbRef.onValue.listen((event) {
                         ),
                         Text(cartitem['description']),
                         const SizedBox(
-                          height: 40,
+                          height: 15,
                         ),
                         Text(
                           cartitem['discount'],
@@ -247,6 +249,50 @@ dbRef.onValue.listen((event) {
                             ),
                           ],
                         ),
+                        SizedBox(
+                          height: 5,
+                        ),
+                        Button(
+                          child: Text('Move to Wishlist'),
+                          onPressed: () async {
+                            final SharedPreferences prefs =
+                                await SharedPreferences.getInstance();
+                            setState(() {
+                              userName = prefs.getString('user_name') ?? '';
+                            });
+                            final DatabaseReference database =
+                                FirebaseDatabase.instance.refFromURL(
+                                    'https://orange-street-default-rtdb.firebaseio.com/');
+                            final model = Product(
+                                name: cartitem['name'],
+                                discount: cartitem['discount'],
+                                price: cartitem['price'],
+                                description: cartitem['description'],
+                                imagePath1: cartitem['imagePath1'],
+                                imagePath2: cartitem['imagePath2'],
+                                imagePath3: cartitem['imagePath3'],
+                                imagePath4: cartitem['imagePath4']);
+                            database
+                                .child('Users')
+                                .child(userName)
+                                .child("WishList")
+                                .push()
+                                .set(model.toJson());
+                            DatabaseReference itemRef = FirebaseDatabase
+                                .instance
+                                .ref()
+                                .child('Users')
+                                .child(userName)
+                                .child('CartItem/${cartitem['key']}');
+                            itemRef.remove();
+                            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                              behavior: SnackBarBehavior.floating,
+                              backgroundColor: Colors.green,
+                              content:
+                                  Text('${cartitem['name']} Moved to WishList'),
+                            ));
+                          },
+                        ),
                         const SizedBox(
                           height: 5,
                         )
@@ -261,7 +307,12 @@ dbRef.onValue.listen((event) {
             right: 15,
             top: 15,
             child: GestureDetector(
-              onTap: () {
+              onTap: () async {
+                final SharedPreferences prefs =
+                    await SharedPreferences.getInstance();
+                setState(() {
+                  userName = prefs.getString('user_name') ?? '';
+                });
                 ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                     backgroundColor: Colors.red,
                     content: Text('Removed ${cartitem['name']}')));
@@ -269,6 +320,7 @@ dbRef.onValue.listen((event) {
                 DatabaseReference itemRef = FirebaseDatabase.instance
                     .ref()
                     .child('Users')
+                    .child(userName)
                     .child('CartItem/${cartitem['key']}');
                 itemRef.remove();
               },
