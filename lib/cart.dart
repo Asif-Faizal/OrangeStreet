@@ -2,6 +2,7 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_database/ui/firebase_animated_list.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:shop/cart_details.dart';
 import 'package:shop/checkout.dart';
 import 'package:shop/models/product.dart';
 import 'package:shop/widgets/button.dart';
@@ -185,7 +186,16 @@ dbRef.onValue.listen((event) {
             Animation<double> animation, int index) {
           Map cartitem = snapshot.value as Map;
           cartitem['key'] = snapshot.key;
-          return listItem(cartitem: cartitem);
+          return GestureDetector(
+            child: listItem(cartitem: cartitem),
+            onTap: () {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) =>
+                          CartDetailsPage(product: cartitem)));
+            },
+          );
         },
         query: dbRef,
       ),

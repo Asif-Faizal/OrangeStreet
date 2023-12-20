@@ -6,6 +6,7 @@ import 'package:shop/cart.dart';
 import 'package:shop/models/product.dart';
 import 'package:shop/widgets/button.dart';
 import 'package:shop/widgets/drawer.dart';
+import 'package:shop/wishlist_details.dart';
 
 class Wishlist extends StatefulWidget {
   const Wishlist({Key? key}) : super(key: key);
@@ -104,7 +105,15 @@ class _WishlistState extends State<Wishlist> {
             Animation<double> animation, int index) {
           Map likedItem = snapshot.value as Map;
           likedItem['key'] = snapshot.key;
-          return wishItems(likedItem: likedItem);
+          return GestureDetector(
+              onTap: () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) =>
+                            WishDetailsPage(product: likedItem)));
+              },
+              child: wishItems(likedItem: likedItem));
         },
         query: dbRef,
       ),
