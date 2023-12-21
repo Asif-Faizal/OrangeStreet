@@ -30,6 +30,7 @@ class CartItem {
   }
 }
 
+// ignore: must_be_immutable
 class Cart extends StatefulWidget {
   String username;
   Cart({required this.username});

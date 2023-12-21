@@ -7,7 +7,11 @@ import 'package:shop/widgets/appbar.dart';
 
 class Checkout extends StatefulWidget {
   final int totalPrice;
-  const Checkout({super.key, required this.totalPrice});
+
+  const Checkout({
+    Key? key,
+    required this.totalPrice,
+  }) : super(key: key);
 
   @override
   State<Checkout> createState() => _CheckoutState();
@@ -15,6 +19,7 @@ class Checkout extends StatefulWidget {
 
 class _CheckoutState extends State<Checkout> {
   late String userName;
+
   final DatabaseReference _databaseReference = FirebaseDatabase.instance.ref();
   TextEditingController _name = TextEditingController();
   TextEditingController _number = TextEditingController();
@@ -29,33 +34,42 @@ class _CheckoutState extends State<Checkout> {
       backgroundColor: Colors.grey.shade100,
       body: Padding(
         padding: EdgeInsets.all(30),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: [
-            AddressTextfield(
-              hintText: 'Name',
-              controller: _name,
-            ),
-            AddressTextfield(
-              hintText: 'Contact Number',
-              controller: _number,
-            ),
-            AddressTextfield(
-              hintText: 'House Name / Flat No.',
-              controller: _house,
-            ),
-            AddressTextfield(
-              hintText: 'Town / City',
-              controller: _town,
-            ),
-            AddressTextfield(
-              hintText: 'Pincode',
-              controller: _pincode,
-            ),
-            SizedBox(
-              height: 30,
-            )
-          ],
+        child: Builder(
+          builder: (BuildContext context) {
+            return Column(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                AddressTextfield(
+                  hintText: 'Name',
+                  controller: _name,
+                  validator: validateName,
+                ),
+                AddressTextfield(
+                  hintText: 'Contact Number',
+                  controller: _number,
+                  validator: validateNumber,
+                ),
+                AddressTextfield(
+                  hintText: 'House Name / Flat No.',
+                  controller: _house,
+                  validator: validateHouse,
+                ),
+                AddressTextfield(
+                  hintText: 'Town / City',
+                  controller: _town,
+                  validator: validateTown,
+                ),
+                AddressTextfield(
+                  hintText: 'Pincode',
+                  controller: _pincode,
+                  validator: validatePincode,
+                ),
+                SizedBox(
+                  height: 30,
+                )
+              ],
+            );
+          },
         ),
       ),
       bottomNavigationBar: Container(
@@ -71,9 +85,10 @@ class _CheckoutState extends State<Checkout> {
                 Text(
                   '\$${widget.totalPrice}',
                   style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold),
+                    color: Colors.white,
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
                 SizedBox(
                   width: 10,
@@ -89,6 +104,13 @@ class _CheckoutState extends State<Checkout> {
                     setState(() {
                       userName = prefs.getString('user_name') ?? '';
                     });
+
+                    String? validationMessage = _validateInputs();
+                    if (validationMessage != null) {
+                      _showErrorSnackBar(context, validationMessage);
+                      return;
+                    }
+
                     _databaseReference
                         .child('Users')
                         .child(userName)
@@ -102,15 +124,16 @@ class _CheckoutState extends State<Checkout> {
                       'pincode': _pincode.text,
                     });
                     Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => PaymentScreen(
-                            house: _house.text,
-                            town: _town.text,
-                            pincode: _pincode.text,
-                            totalAmount: widget.totalPrice,
-                          ),
-                        ));
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => PaymentScreen(
+                          house: _house.text,
+                          town: _town.text,
+                          pincode: _pincode.text,
+                          totalAmount: widget.totalPrice,
+                        ),
+                      ),
+                    );
                   },
                   child: Padding(
                     padding:
@@ -136,5 +159,76 @@ class _CheckoutState extends State<Checkout> {
         ),
       ),
     );
+  }
+
+  void _showErrorSnackBar(BuildContext context, String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        behavior: SnackBarBehavior.floating,
+        content: Text(message),
+        backgroundColor: Colors.red,
+      ),
+    );
+  }
+
+  String? validateName(String value) {
+    if (value.isEmpty) {
+      return 'Please enter your name';
+    }
+    return null;
+  }
+
+  String? validateNumber(String value) {
+    if (value.isEmpty) {
+      return 'Please enter your 10-digit contact number';
+    } else if (value.length != 10 || !RegExp(r'^[0-9]+$').hasMatch(value)) {
+      return 'Please enter a valid 10-digit phone number';
+    }
+
+    return null;
+  }
+
+  String? validateHouse(String value) {
+    if (value.isEmpty) {
+      return 'Please enter your house name or flat number';
+    }
+    return null;
+  }
+
+  String? validateTown(String value) {
+    if (value.isEmpty) {
+      return 'Please enter your town or city';
+    }
+    return null;
+  }
+
+  String? validatePincode(String value) {
+    if (value.isEmpty) {
+      return 'Please enter your pincode';
+    }
+    if (value.length != 6) {
+      return 'Please enter a valid 6-digit pincode';
+    }
+    return null;
+  }
+
+  String? _validateInputs() {
+    if (validateName(_name.text) != null) {
+      return 'Please enter your name';
+    }
+    if (validateNumber(_number.text) != null) {
+      return 'Please enter your contact number';
+    }
+    if (validateHouse(_house.text) != null) {
+      return 'Please enter your house name or flat number';
+    }
+    if (validateTown(_town.text) != null) {
+      return 'Please enter your town or city';
+    }
+    if (validatePincode(_pincode.text) != null) {
+      return 'Please enter your pincode';
+    }
+
+    return null;
   }
 }

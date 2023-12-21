@@ -25,6 +25,7 @@ class PaymentScreen extends StatefulWidget {
 }
 
 class _PaymentScreenState extends State<PaymentScreen> {
+  TextEditingController _coupon = TextEditingController();
   late String userName;
   @override
   void initState() {
@@ -70,9 +71,26 @@ class _PaymentScreenState extends State<PaymentScreen> {
                 ),
               ),
             ),
-            const CustomTextField(
-                prefixIcon: Icons.money_off_rounded,
-                hintText: 'Enter Coupon Code'),
+            TextFormField(
+              controller: _coupon,
+              decoration: InputDecoration(
+                prefixIcon:
+                    Icon(Icons.money_off_csred, color: Colors.deepOrange),
+                hintText: 'Coupon Code',
+                focusedBorder: OutlineInputBorder(
+                  borderSide: BorderSide(color: Colors.deepOrange),
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderSide: BorderSide(color: Colors.deepOrange),
+                ),
+                errorBorder: OutlineInputBorder(
+                  borderSide: BorderSide(color: Colors.red),
+                ),
+                focusedErrorBorder: OutlineInputBorder(
+                  borderSide: BorderSide(color: Colors.red),
+                ),
+              ),
+            ),
             const SizedBox(
               width: double.infinity,
               child: Text(
@@ -185,26 +203,29 @@ class _PaymentScreenState extends State<PaymentScreen> {
                     final DatabaseReference database = FirebaseDatabase.instance
                         .refFromURL(
                             'https://orange-street-default-rtdb.firebaseio.com/');
-                    final model = Product(
-                        name: cartitem['name'],
-                        discount: cartitem['discount'],
-                        price: cartitem['price'],
-                        description: cartitem['description'],
-                        imagePath1: cartitem['imagePath1'],
-                        imagePath2: cartitem['imagePath2'],
-                        imagePath3: cartitem['imagePath3'],
-                        imagePath4: cartitem['imagePath4']);
-                    database
-                        .child('Users')
-                        .child(userName)
-                        .child("Orders")
-                        .push()
-                        .set(model.toJson());
+                    // final model = Product(
+                    //   name: widget.cartItems[i]['name'],
+                    //   discount: widget.cartItems[i]['discount'],
+                    //   price: widget.cartItems[i]['price'],
+                    //   description: widget.cartItems[i]['description'],
+                    //   imagePath1: widget.cartItems[i]['imagePath1'],
+                    //   imagePath2: widget.cartItems[i]['imagePath2'],
+                    //   imagePath3: widget.cartItems[i]['imagePath3'],
+                    //   imagePath4: widget.cartItems[i]['imagePath4'],
+                    // );
+                    // database
+                    //     .child('Users')
+                    //     .child(userName)
+                    //     .child("Orders")
+                    //     .push()
+                    //     .set(model.toJson());
+
+                    await Duration(milliseconds: 200);
                     DatabaseReference itemRef = FirebaseDatabase.instance
                         .ref()
                         .child('Users')
                         .child(userName)
-                        .child('CartItem/${cartitem['key']}');
+                        .child('CartItem');
                     itemRef.remove();
                     Navigator.push(
                         context,

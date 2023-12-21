@@ -12,6 +12,7 @@ class AddressTextfield extends StatelessWidget {
     this.obscureText = false,
     this.borderColor = Colors.deepOrange,
     this.controller,
+    required String? Function(String value) validator,
   }) : super(key: key);
 
   @override

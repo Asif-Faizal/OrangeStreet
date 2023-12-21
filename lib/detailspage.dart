@@ -36,9 +36,12 @@ class _DetailsPageState extends State<DetailsPage> {
               children: [
                 CarouselSlider(
                   items: [
-                    Image.asset(
-                      widget.product.imagePath1,
-                      scale: 1,
+                    Hero(
+                      tag: 'productimage',
+                      child: Image.asset(
+                        widget.product.imagePath1,
+                        scale: 1,
+                      ),
                     ),
                     Image.asset(
                       widget.product.imagePath2,

@@ -66,9 +66,12 @@ class _ProductTileState extends State<ProductTile> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      Image.asset(
-                        widget.product.imagePath1,
-                        height: 300,
+                      Hero(
+                        tag: 'productimage',
+                        child: Image.asset(
+                          widget.product.imagePath1,
+                          height: 300,
+                        ),
                       ),
                       SizedBox(height: 15),
                       Text(

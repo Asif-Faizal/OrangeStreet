@@ -41,9 +41,12 @@ class _GridProductTileState extends State<GridProductTile> {
               children: [
                 Padding(
                   padding: const EdgeInsets.all(8.0),
-                  child: Image.asset(
-                    widget.product.imagePath1,
-                    height: 200,
+                  child: Hero(
+                    tag: 'productimage',
+                    child: Image.asset(
+                      widget.product.imagePath1,
+                      height: 200,
+                    ),
                   ),
                 ),
                 SizedBox(height: 10),
