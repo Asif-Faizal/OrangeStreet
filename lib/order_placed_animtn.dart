@@ -35,7 +35,8 @@ class _OrderAnimationState extends State<OrderAnimation> {
       body: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          SizedBox(
+          Container(
+            height: 200,
             child: Lottie.network(
                 "https://lottie.host/9f0cd495-8769-4aa8-ba70-e69ce98deb2d/fCDRLlDoxO.json",
                 repeat: false),
