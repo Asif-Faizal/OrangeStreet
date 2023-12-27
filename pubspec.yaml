@@ -99,6 +99,7 @@ flutter:
     - lib/assets/Products/formals/4/
     - lib/assets/Products/formals/5/
     - lib/assets/Products/formals/6/
+    - lib/assets/payments/
   #   - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see

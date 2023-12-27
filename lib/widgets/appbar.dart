@@ -10,11 +10,11 @@ class MyAppBar extends StatelessWidget implements PreferredSizeWidget {
 
   @override
   Size get preferredSize => Size.fromHeight(kToolbarHeight);
-  getUser() async {
+  Future<String> getUser() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-
-    var userName = prefs.getString('user_name') ?? '';
-    print(("$userName LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL"));
+    var username = prefs.getString('user_name') ?? '';
+    print(("$username LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL"));
+    return username;
   }
 
   @override
@@ -54,13 +54,15 @@ class MyAppBar extends StatelessWidget implements PreferredSizeWidget {
               width: 15,
             ),
             GestureDetector(
-              onTap: () {
+              onTap: () async {
+                String username = await getUser();
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                      builder: (context) => Cart(
-                            username: getUser(),
-                          )),
+                    builder: (context) => Cart(
+                      username: username,
+                    ),
+                  ),
                 );
               },
               child: Icon(

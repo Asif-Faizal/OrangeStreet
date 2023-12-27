@@ -42,10 +42,11 @@ class _WishlistState extends State<Wishlist> {
         .child('WishList');
   }
 
-  getUser() async {
+  Future<String> getUser() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     var username = prefs.getString('user_name') ?? '';
     print(("$username LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL"));
+    return username;
   }
 
   @override
@@ -74,13 +75,16 @@ class _WishlistState extends State<Wishlist> {
                 foregroundColor: Colors.white,
                 side: const BorderSide(width: 3, color: Colors.white),
               ),
-              onPressed: () {
+              onPressed: () async {
+                String username = await getUser();
                 Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => Cart(
-                              username: getUser(),
-                            )));
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => Cart(
+                      username: username,
+                    ),
+                  ),
+                );
               },
               child: const Padding(
                 padding: EdgeInsets.symmetric(vertical: 8, horizontal: 40),

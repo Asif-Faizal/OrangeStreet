@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:shop/account_info.dart';
 import 'package:shop/login.dart';
 import 'package:shop/my_orders.dart';
 
@@ -42,10 +43,12 @@ class _MyDrawerState extends State<MyDrawer> {
   Widget _buildDrawerHeader(BuildContext context) {
     return GestureDetector(
         onTap: () {
-          Navigator.pop(context);
+          Navigator.push(
+              context, MaterialPageRoute(builder: (context) => AccountInfo()));
         },
         child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 10),
+          padding:
+              const EdgeInsets.only(left: 10, right: 10, bottom: 20, top: 50),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
