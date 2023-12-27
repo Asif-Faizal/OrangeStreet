@@ -4,9 +4,16 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shop/login.dart';
 import 'package:shop/my_orders.dart';
 
-class MyDrawer extends StatelessWidget {
+class MyDrawer extends StatefulWidget {
   const MyDrawer({Key? key}) : super(key: key);
 
+  @override
+  State<MyDrawer> createState() => _MyDrawerState();
+}
+
+class _MyDrawerState extends State<MyDrawer> {
+  late String userName;
+  late String userMail;
   Future<void> _signOut(BuildContext context) async {
     try {
       await FirebaseAuth.instance.signOut();
@@ -16,6 +23,20 @@ class MyDrawer extends StatelessWidget {
     } catch (e) {
       print('Error during logout: $e');
     }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    getData();
+  }
+
+  void getData() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      userName = prefs.getString('user_name') ?? '';
+      userMail = prefs.getString('user_email') ?? '';
+    });
   }
 
   Widget _buildDrawerHeader(BuildContext context) {
@@ -30,19 +51,21 @@ class MyDrawer extends StatelessWidget {
             children: [
               CircleAvatar(
                 backgroundColor: Colors.deepOrange,
-                radius: 60,
+                radius: 50,
+                backgroundImage: NetworkImage(
+                    'https://clipart-library.com/images/pi5dn47BT.jpg'),
               ),
               Container(
                 child: Column(
                   children: [
                     Text(
-                      'userName',
+                      userName,
                       style: TextStyle(fontSize: 20),
                     ),
                     SizedBox(
-                      height: 15,
+                      height: 8,
                     ),
-                    Text('userMail')
+                    Text(userMail)
                   ],
                 ),
               ),

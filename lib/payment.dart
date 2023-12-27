@@ -1,7 +1,7 @@
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:shop/assets/online_payments.dart';
+import 'package:shop/online_payments.dart';
 import 'package:shop/order_placed_animtn.dart';
 import 'package:shop/widgets/appbar.dart';
 
@@ -11,9 +11,9 @@ class PaymentScreen extends StatefulWidget {
   final String house;
   final String town;
   final String pincode;
-  final int totalAmount;
+  int totalAmount;
 
-  const PaymentScreen({
+  PaymentScreen({
     Key? key,
     required this.house,
     required this.town,
@@ -29,9 +29,67 @@ class _PaymentScreenState extends State<PaymentScreen> {
   PaymentMethod _groupValue = PaymentMethod.cod;
   TextEditingController _coupon = TextEditingController();
   late String userName;
+  bool isCouponApplied = false;
+
   @override
   void initState() {
     super.initState();
+  }
+
+  applyCoupon() {
+    if (isCouponApplied) {
+      // Coupon already applied, show a message or handle as needed
+      // For example, you can display a SnackBar with an appropriate message.
+      SnackBar snackBar = SnackBar(
+        behavior: SnackBarBehavior.floating,
+        backgroundColor: Colors.red,
+        content: Text("Coupon FLAT30 has already been applied."),
+        duration: Duration(seconds: 2),
+      );
+      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+    } else {
+      String couponCode = _coupon.text.trim();
+      if (couponCode == "FLAT30") {
+        double discountPercentage = 0.30;
+        double discountAmount = widget.totalAmount * discountPercentage;
+        setState(() {
+          widget.totalAmount -= discountAmount.toInt();
+          isCouponApplied =
+              true; // Set the flag to true after applying the coupon
+        });
+
+        // Display the snackbar
+        SnackBar snackBar = SnackBar(
+          closeIconColor: Colors.white,
+          behavior: SnackBarBehavior.floating,
+          backgroundColor: Colors.green,
+          content: Text("Coupon FLAT30 applied successfully!"),
+          duration: Duration(seconds: 2),
+          action: SnackBarAction(
+            textColor: Colors.white,
+            label: "UNDO",
+            onPressed: () {
+              // Implement logic to undo the coupon if needed
+              setState(() {
+                widget.totalAmount += discountAmount.toInt();
+                isCouponApplied =
+                    false; // Reset the flag if the coupon is undone
+              });
+            },
+          ),
+        );
+        ScaffoldMessenger.of(context).showSnackBar(snackBar);
+      } else {
+        // Handle invalid coupon codes
+        SnackBar snackBar = SnackBar(
+          behavior: SnackBarBehavior.floating,
+          backgroundColor: Colors.red,
+          content: Text("Invalid coupon code"),
+          duration: Duration(seconds: 1),
+        );
+        ScaffoldMessenger.of(context).showSnackBar(snackBar);
+      }
+    }
   }
 
   void _placeOrder() async {
@@ -39,12 +97,14 @@ class _PaymentScreenState extends State<PaymentScreen> {
     setState(() {
       userName = prefs.getString('user_name') ?? '';
     });
-
     if (_groupValue == PaymentMethod.online) {
       // Navigate to the online payment page (replace 'OnlinePaymentScreen' with your actual screen)
       Navigator.push(
         context,
-        MaterialPageRoute(builder: (context) => OnlinePaymentScreen()),
+        MaterialPageRoute(
+            builder: (context) => OnlinePaymentScreen(
+                  totalAmount: widget.totalAmount,
+                )),
       );
     } else {
       // Process the order and navigate to the OrderAnimation page
@@ -87,35 +147,167 @@ class _PaymentScreenState extends State<PaymentScreen> {
     return Scaffold(
       backgroundColor: Colors.grey.shade100,
       appBar: const MyAppBar(title: 'Payments'),
-      body: Padding(
-        padding: const EdgeInsets.all(15),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: [
-            SizedBox(
-              height: 60,
-              width: double.infinity,
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 5),
-                child: Card(
-                  elevation: 1,
-                  child: Padding(
-                    padding: const EdgeInsets.all(15),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          'Deliver to:  ${widget.house}, ${widget.town}, ${widget.pincode}',
-                          textAlign: TextAlign.center,
-                        ),
-                        GestureDetector(
-                          onTap: () {
-                            Navigator.pop(context);
-                          },
-                          child: const Text(
-                            'CHANGE',
-                            style: TextStyle(color: Colors.deepOrange),
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(15),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              SizedBox(
+                height: 60,
+                width: double.infinity,
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 5),
+                  child: Card(
+                    elevation: 1,
+                    child: Padding(
+                      padding: const EdgeInsets.all(15),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            'Deliver to:  ${widget.house}, ${widget.town}, ${widget.pincode}',
                             textAlign: TextAlign.center,
+                          ),
+                          GestureDetector(
+                            onTap: () {
+                              Navigator.pop(context);
+                            },
+                            child: const Text(
+                              'CHANGE',
+                              style: TextStyle(color: Colors.deepOrange),
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+              SizedBox(
+                height: 20,
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 10),
+                child: TextFormField(
+                  controller: _coupon,
+                  decoration: const InputDecoration(
+                    suffixStyle: TextStyle(color: Colors.deepOrange),
+                    prefixIcon:
+                        Icon(Icons.money_off_csred, color: Colors.deepOrange),
+                    hintText: 'Coupon Code',
+                    focusedBorder: OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.deepOrange),
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.deepOrange),
+                    ),
+                    errorBorder: OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.red),
+                    ),
+                    focusedErrorBorder: OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.red),
+                    ),
+                  ),
+                ),
+              ),
+              Row(
+                children: [
+                  Spacer(),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 10),
+                    child: TextButton(
+                      onPressed: applyCoupon,
+                      child: Text(
+                        "Apply",
+                        style: TextStyle(
+                            color: Colors.deepOrange,
+                            fontWeight: FontWeight.w800),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              SizedBox(
+                height: 20,
+              ),
+              const SizedBox(
+                width: double.infinity,
+                child: Text(
+                  '  Payment Options',
+                  textAlign: TextAlign.left,
+                  style: TextStyle(
+                      color: Colors.deepOrange,
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold),
+                ),
+              ),
+              SizedBox(
+                height: 20,
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 10),
+                child: Card(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 20),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 10),
+                          child: ListTile(
+                            title: Text(
+                              'Cash on Delivery',
+                              style: TextStyle(
+                                  fontSize: 18, fontWeight: FontWeight.w500),
+                            ),
+                            leading: Radio(
+                                activeColor: Colors.deepOrange,
+                                splashRadius: 10,
+                                value: PaymentMethod.cod,
+                                groupValue: _groupValue,
+                                onChanged: (PaymentMethod? value) {
+                                  setState(() {
+                                    _groupValue = value!;
+                                  });
+                                }),
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 10),
+                          child: ListTile(
+                            title: Text('Pay Online',
+                                style: TextStyle(
+                                    fontSize: 18, fontWeight: FontWeight.w500)),
+                            leading: Radio(
+                                activeColor: Colors.deepOrange,
+                                splashRadius: 10,
+                                value: PaymentMethod.online,
+                                groupValue: _groupValue,
+                                onChanged: (PaymentMethod? value) {
+                                  setState(() {
+                                    _groupValue = value!;
+                                  });
+                                }),
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 10),
+                          child: ListTile(
+                            title: Text('Pay Later',
+                                style: TextStyle(
+                                    fontSize: 18, fontWeight: FontWeight.w500)),
+                            leading: Radio(
+                                activeColor: Colors.deepOrange,
+                                splashRadius: 10,
+                                value: PaymentMethod.pay_later,
+                                groupValue: _groupValue,
+                                onChanged: (PaymentMethod? value) {
+                                  setState(() {
+                                    _groupValue = value!;
+                                  });
+                                }),
                           ),
                         ),
                       ],
@@ -123,116 +315,11 @@ class _PaymentScreenState extends State<PaymentScreen> {
                   ),
                 ),
               ),
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 10),
-              child: TextFormField(
-                controller: _coupon,
-                decoration: const InputDecoration(
-                  suffixText: 'Apply ',
-                  suffixStyle: TextStyle(color: Colors.deepOrange),
-                  prefixIcon:
-                      Icon(Icons.money_off_csred, color: Colors.deepOrange),
-                  hintText: 'Coupon Code',
-                  focusedBorder: OutlineInputBorder(
-                    borderSide: BorderSide(color: Colors.deepOrange),
-                  ),
-                  enabledBorder: OutlineInputBorder(
-                    borderSide: BorderSide(color: Colors.deepOrange),
-                  ),
-                  errorBorder: OutlineInputBorder(
-                    borderSide: BorderSide(color: Colors.red),
-                  ),
-                  focusedErrorBorder: OutlineInputBorder(
-                    borderSide: BorderSide(color: Colors.red),
-                  ),
-                ),
-              ),
-            ),
-            const SizedBox(
-              width: double.infinity,
-              child: Text(
-                '  Payment Options',
-                textAlign: TextAlign.left,
-                style: TextStyle(
-                    color: Colors.deepOrange,
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 10),
-              child: Card(
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 20),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 10),
-                        child: ListTile(
-                          title: Text(
-                            'Cash on Delivery',
-                            style: TextStyle(
-                                fontSize: 18, fontWeight: FontWeight.w500),
-                          ),
-                          leading: Radio(
-                              activeColor: Colors.deepOrange,
-                              splashRadius: 10,
-                              value: PaymentMethod.cod,
-                              groupValue: _groupValue,
-                              onChanged: (PaymentMethod? value) {
-                                setState(() {
-                                  _groupValue = value!;
-                                });
-                              }),
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 10),
-                        child: ListTile(
-                          title: Text('Pay Online',
-                              style: TextStyle(
-                                  fontSize: 18, fontWeight: FontWeight.w500)),
-                          leading: Radio(
-                              activeColor: Colors.deepOrange,
-                              splashRadius: 10,
-                              value: PaymentMethod.online,
-                              groupValue: _groupValue,
-                              onChanged: (PaymentMethod? value) {
-                                setState(() {
-                                  _groupValue = value!;
-                                });
-                              }),
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 10),
-                        child: ListTile(
-                          title: Text('Pay Later',
-                              style: TextStyle(
-                                  fontSize: 18, fontWeight: FontWeight.w500)),
-                          leading: Radio(
-                              activeColor: Colors.deepOrange,
-                              splashRadius: 10,
-                              value: PaymentMethod.pay_later,
-                              groupValue: _groupValue,
-                              onChanged: (PaymentMethod? value) {
-                                setState(() {
-                                  _groupValue = value!;
-                                });
-                              }),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-            const SizedBox(
-              height: 20,
-            )
-          ],
+              const SizedBox(
+                height: 40,
+              )
+            ],
+          ),
         ),
       ),
       bottomNavigationBar: Container(
