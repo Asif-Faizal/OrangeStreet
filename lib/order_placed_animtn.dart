@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
-import 'package:shop/homepage.dart';
+import 'package:shop/my_orders.dart';
 
 class OrderAnimation extends StatefulWidget {
   const OrderAnimation({super.key});
@@ -23,7 +23,7 @@ class _OrderAnimationState extends State<OrderAnimation> {
       const Duration(seconds: 3),
       () => Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (context) => const HomePage()),
+        MaterialPageRoute(builder: (context) => const MyOrders()),
       ),
     );
   }

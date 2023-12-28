@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:shop/cart.dart';
 import 'package:shop/widgets/drawer.dart';
-import 'package:shop/wishlist.dart';
 
 class NotificationScreen extends StatefulWidget {
   const NotificationScreen({Key? key}) : super(key: key);

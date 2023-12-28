@@ -2,7 +2,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:shop/homepage.dart';
 import 'package:shop/introscreen.dart';
 import 'package:shop/login.dart';
 import 'package:shop/models/user.dart';

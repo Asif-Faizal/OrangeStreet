@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:shop/homepage.dart';
-import 'package:shop/signup.dart';
 import 'package:shop/widgets/button.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 

@@ -7,6 +7,7 @@ import 'package:shop/widgets/appbar.dart';
 
 enum PaymentMethod { cod, online, pay_later }
 
+// ignore: must_be_immutable
 class PaymentScreen extends StatefulWidget {
   final String house;
   final String town;
@@ -97,49 +98,56 @@ class _PaymentScreenState extends State<PaymentScreen> {
     setState(() {
       userName = prefs.getString('user_name') ?? '';
     });
+
     if (_groupValue == PaymentMethod.online) {
-      // Navigate to the online payment page (replace 'OnlinePaymentScreen' with your actual screen)
       Navigator.push(
         context,
         MaterialPageRoute(
-            builder: (context) => OnlinePaymentScreen(
-                  totalAmount: widget.totalAmount,
-                )),
+          builder: (context) => OnlinePaymentScreen(
+            totalAmount: widget.totalAmount,
+          ),
+        ),
       );
     } else {
-      // Process the order and navigate to the OrderAnimation page
-      final DatabaseReference database = FirebaseDatabase.instance.refFromURL(
-        'https://orange-street-default-rtdb.firebaseio.com/',
-      );
-      // final model = Product(
-      //   name: widget.cartItems[i]['name'],
-      //   discount: widget.cartItems[i]['discount'],
-      //   price: widget.cartItems[i]['price'],
-      //   description: widget.cartItems[i]['description'],
-      //   imagePath1: widget.cartItems[i]['imagePath1'],
-      //   imagePath2: widget.cartItems[i]['imagePath2'],
-      //   imagePath3: widget.cartItems[i]['imagePath3'],
-      //   imagePath4: widget.cartItems[i]['imagePath4'],
-      // );
-      // database
-      //     .child('Users')
-      //     .child(userName)
-      //     .child("Orders")
-      //     .push()
-      //     .set(model.toJson());
+      // Move cart items to orders
+      await moveCartItemsToOrders(userName);
 
-      const Duration(milliseconds: 200);
-      DatabaseReference itemRef = FirebaseDatabase.instance
-          .ref()
-          .child('Users')
-          .child(userName)
-          .child('CartItem');
-      itemRef.remove();
+      // Navigate to the OrderAnimation page
       Navigator.push(
         context,
         MaterialPageRoute(builder: (context) => const OrderAnimation()),
       );
     }
+  }
+
+  Future<void> moveCartItemsToOrders(String userName) async {
+    DatabaseReference cartRef = FirebaseDatabase.instance
+        .ref()
+        .child('Users')
+        .child(userName)
+        .child('CartItem');
+
+    DatabaseReference ordersRef = FirebaseDatabase.instance
+        .ref()
+        .child('Users')
+        .child(userName)
+        .child('Orders');
+
+    // Read cart items
+    // Use onValue instead of once to get a DatabaseEvent
+    cartRef.onValue.listen((event) {
+      Map<dynamic, dynamic>? cartItems = (event.snapshot.value as Map?)?.cast();
+
+      // Move cart items to orders
+      if (cartItems != null) {
+        for (var entry in cartItems.entries) {
+          ordersRef.push().set(entry.value);
+        }
+      }
+
+      // Remove cart items after moving to orders
+      cartRef.remove();
+    });
   }
 
   @override

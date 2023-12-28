@@ -40,11 +40,20 @@ class _AccountInfoState extends State<AccountInfo> {
             Row(
               children: [
                 Spacer(),
-                CircleAvatar(
-                  backgroundColor: Colors.deepOrange,
-                  radius: 70,
-                  backgroundImage: NetworkImage(
-                      'https://clipart-library.com/images/pi5dn47BT.jpg'),
+                Stack(
+                  children: [
+                    CircleAvatar(
+                      backgroundColor: Colors.deepOrange,
+                      radius: 70,
+                      backgroundImage: NetworkImage(
+                          'https://clipart-library.com/images/pi5dn47BT.jpg'),
+                    ),
+                    Positioned(
+                      child: Icon(Icons.add_a_photo),
+                      bottom: 5,
+                      right: 5,
+                    )
+                  ],
                 ),
                 Spacer(),
               ],
@@ -60,13 +69,22 @@ class _AccountInfoState extends State<AccountInfo> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
+                    Padding(
+                      padding: const EdgeInsets.all(10),
+                      child: Text(
+                        'User Name:',
+                        style: TextStyle(
+                          fontSize: 18,
+                        ),
+                      ),
+                    ),
                     Spacer(),
                     Padding(
                       padding: const EdgeInsets.all(10),
                       child: Text(
                         userName,
                         style: TextStyle(
-                          fontSize: 20,
+                          fontSize: 18,
                         ),
                       ),
                     ),
@@ -85,15 +103,38 @@ class _AccountInfoState extends State<AccountInfo> {
             Container(
               decoration: BoxDecoration(
                   border: Border.all(color: Colors.deepOrange, width: 1)),
-              child: Text(userMail),
-            ),
-            SizedBox(
-              height: 20,
-            ),
-            Container(
-              decoration: BoxDecoration(
-                  border: Border.all(color: Colors.deepOrange, width: 1)),
-              child: Text('data'),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 10),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.all(10),
+                      child: Text(
+                        'Email:',
+                        style: TextStyle(
+                          fontSize: 18,
+                        ),
+                      ),
+                    ),
+                    Spacer(),
+                    Padding(
+                      padding: const EdgeInsets.all(10),
+                      child: Text(
+                        userMail,
+                        style: TextStyle(
+                          fontSize: 18,
+                        ),
+                      ),
+                    ),
+                    Spacer(),
+                    Icon(
+                      Icons.edit,
+                      size: 16,
+                    )
+                  ],
+                ),
+              ),
             ),
             Spacer(
               flex: 2,
