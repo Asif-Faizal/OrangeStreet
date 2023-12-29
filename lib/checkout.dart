@@ -26,6 +26,14 @@ class _CheckoutState extends State<Checkout> {
   TextEditingController _house = TextEditingController();
   TextEditingController _town = TextEditingController();
   TextEditingController _pincode = TextEditingController();
+  void saveAddress() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setString('_name', _name.text);
+    prefs.setString('_number', _number.text);
+    prefs.setString('_house', _house.text);
+    prefs.setString('_town', _town.text);
+    prefs.setString('_pincode', _pincode.text);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -104,13 +112,11 @@ class _CheckoutState extends State<Checkout> {
                     setState(() {
                       userName = prefs.getString('user_name') ?? '';
                     });
-
                     String? validationMessage = _validateInputs();
                     if (validationMessage != null) {
                       _showErrorSnackBar(context, validationMessage);
                       return;
                     }
-
                     _databaseReference
                         .child('Users')
                         .child(userName)
@@ -134,6 +140,7 @@ class _CheckoutState extends State<Checkout> {
                         ),
                       ),
                     );
+                    saveAddress();
                   },
                   child: Padding(
                     padding:

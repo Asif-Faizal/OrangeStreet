@@ -10,8 +10,8 @@ class AccountInfo extends StatefulWidget {
 }
 
 class _AccountInfoState extends State<AccountInfo> {
-  late String userName;
-  late String userMail;
+  late String userName = '';
+  late String userMail = '';
   @override
   void initState() {
     super.initState();

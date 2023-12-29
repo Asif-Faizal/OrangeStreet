@@ -13,8 +13,8 @@ class MyDrawer extends StatefulWidget {
 }
 
 class _MyDrawerState extends State<MyDrawer> {
-  late String userName;
-  late String userMail;
+  late String userName = '';
+  late String userMail = '';
   Future<void> _signOut(BuildContext context) async {
     try {
       await FirebaseAuth.instance.signOut();
@@ -42,42 +42,47 @@ class _MyDrawerState extends State<MyDrawer> {
 
   Widget _buildDrawerHeader(BuildContext context) {
     return GestureDetector(
-        onTap: () {
-          Navigator.push(
-              context, MaterialPageRoute(builder: (context) => AccountInfo()));
-        },
-        child: Padding(
-          padding:
-              const EdgeInsets.only(left: 10, right: 10, bottom: 20, top: 50),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [
-              CircleAvatar(
-                backgroundColor: Colors.deepOrange,
-                radius: 50,
-                backgroundImage: NetworkImage(
-                    'https://clipart-library.com/images/pi5dn47BT.jpg'),
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => AccountInfo()),
+        );
+      },
+      child: Padding(
+        padding:
+            const EdgeInsets.only(left: 10, right: 10, bottom: 20, top: 50),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: [
+            CircleAvatar(
+              backgroundColor: Colors.deepOrange,
+              radius: 50,
+              backgroundImage: NetworkImage(
+                  'https://clipart-library.com/images/pi5dn47BT.jpg'),
+            ),
+            Container(
+              child: Column(
+                children: [
+                  Text(
+                    userName ??
+                        'Loading...', // Display 'Loading...' if userName is null
+                    style: TextStyle(fontSize: 20),
+                  ),
+                  SizedBox(
+                    height: 8,
+                  ),
+                  Text(userMail ??
+                      'Loading...') // Display 'Loading...' if userMail is null
+                ],
               ),
-              Container(
-                child: Column(
-                  children: [
-                    Text(
-                      userName,
-                      style: TextStyle(fontSize: 20),
-                    ),
-                    SizedBox(
-                      height: 8,
-                    ),
-                    Text(userMail)
-                  ],
-                ),
-              ),
-              SizedBox(
-                width: 10,
-              )
-            ],
-          ),
-        ));
+            ),
+            SizedBox(
+              width: 10,
+            )
+          ],
+        ),
+      ),
+    );
   }
 
   @override
@@ -90,39 +95,6 @@ class _MyDrawerState extends State<MyDrawer> {
           _buildDrawerHeader(context),
           SizedBox(
             height: 20,
-          ),
-          GestureDetector(
-            onTap: () {
-              _signOut(context);
-              ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                  behavior: SnackBarBehavior.floating,
-                  backgroundColor: Colors.red,
-                  content: Text(
-                    'Logged Out Succesfully',
-                  )));
-            },
-            child: Container(
-              padding: EdgeInsets.all(25),
-              decoration: BoxDecoration(
-                  border: Border(
-                      top: BorderSide(color: Colors.deepOrange, width: 0.25))),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: [
-                  Expanded(
-                    flex: 3,
-                    child: Text(
-                      'Log Out',
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                  ),
-                  Icon(Icons.outbox_rounded)
-                ],
-              ),
-            ),
           ),
           GestureDetector(
             onTap: () {
@@ -227,6 +199,40 @@ class _MyDrawerState extends State<MyDrawer> {
                     ),
                   ),
                   Icon(Icons.message_outlined)
+                ],
+              ),
+            ),
+          ),
+          GestureDetector(
+            onTap: () {
+              _signOut(context);
+              ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                  behavior: SnackBarBehavior.floating,
+                  backgroundColor: Colors.red,
+                  content: Text(
+                    'Logged Out Succesfully',
+                  )));
+            },
+            child: Container(
+              padding: EdgeInsets.all(25),
+              decoration: BoxDecoration(
+                  border: Border(
+                      bottom:
+                          BorderSide(color: Colors.deepOrange, width: 0.25))),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  Expanded(
+                    flex: 3,
+                    child: Text(
+                      'Log Out',
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ),
+                  Icon(Icons.outbox_rounded)
                 ],
               ),
             ),
