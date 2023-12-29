@@ -1,4 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shop/homepage.dart';
@@ -14,9 +15,29 @@ class Login extends StatefulWidget {
 }
 
 class _LoginState extends State<Login> {
+  User? _user;
   TextEditingController _emailController = TextEditingController();
   TextEditingController _passwordController = TextEditingController();
   TextEditingController _userNamecontroller = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    _initializeFirebase();
+  }
+
+  Future<void> _initializeFirebase() async {
+    await Firebase.initializeApp();
+    User? user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(
+          builder: (context) => HomePage(),
+        ),
+      );
+    }
+  }
+
   void _login() async {
     final auth = FirebaseAuth.instance;
 
@@ -74,71 +95,75 @@ class _LoginState extends State<Login> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.white,
-      body: Padding(
-        padding: const EdgeInsets.all(20.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            CustomTextField(
-              prefixIcon: Icons.account_box,
-              hintText: "User Name",
-              controller: _userNamecontroller,
-            ),
-            SizedBox(
-              height: 30,
-            ),
-            CustomTextField(
-              prefixIcon: Icons.mail,
-              hintText: "Email",
-              controller: _emailController,
-            ),
-            SizedBox(
-              height: 30,
-            ),
-            CustomTextField(
-              prefixIcon: Icons.lock_person,
-              hintText: "Password",
-              controller: _passwordController,
-              obscureText: true,
-            ),
-            const SizedBox(height: 20),
-            Button(
-                onPressed: _login,
-                child: Row(
-                  children: [
-                    Spacer(),
-                    Text('Login'),
-                    Spacer(),
-                  ],
-                )),
-            SizedBox(
-              height: 20,
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
-                  'Not an User?  ',
-                  style: TextStyle(color: Colors.black, fontSize: 12),
-                ),
-                GestureDetector(
-                  onTap: () {
-                    Navigator.push(context,
-                        MaterialPageRoute(builder: (context) => Signup()));
-                  },
-                  child: Text('Signup',
-                      style: TextStyle(
-                          color: Colors.deepOrange,
-                          fontSize: 14,
-                          fontWeight: FontWeight.bold)),
-                )
-              ],
-            )
-          ],
+    if (_user != null) {
+      return HomePage();
+    } else {
+      return Scaffold(
+        backgroundColor: Colors.white,
+        body: Padding(
+          padding: const EdgeInsets.all(20.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              CustomTextField(
+                prefixIcon: Icons.account_box,
+                hintText: "User Name",
+                controller: _userNamecontroller,
+              ),
+              SizedBox(
+                height: 30,
+              ),
+              CustomTextField(
+                prefixIcon: Icons.mail,
+                hintText: "Email",
+                controller: _emailController,
+              ),
+              SizedBox(
+                height: 30,
+              ),
+              CustomTextField(
+                prefixIcon: Icons.lock_person,
+                hintText: "Password",
+                controller: _passwordController,
+                obscureText: true,
+              ),
+              const SizedBox(height: 20),
+              Button(
+                  onPressed: _login,
+                  child: Row(
+                    children: [
+                      Spacer(),
+                      Text('Login'),
+                      Spacer(),
+                    ],
+                  )),
+              SizedBox(
+                height: 20,
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    'Not an User?  ',
+                    style: TextStyle(color: Colors.black, fontSize: 12),
+                  ),
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.push(context,
+                          MaterialPageRoute(builder: (context) => Signup()));
+                    },
+                    child: Text('Signup',
+                        style: TextStyle(
+                            color: Colors.deepOrange,
+                            fontSize: 14,
+                            fontWeight: FontWeight.bold)),
+                  )
+                ],
+              )
+            ],
+          ),
         ),
-      ),
-    );
+      );
+    }
   }
 }

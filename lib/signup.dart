@@ -1,7 +1,9 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:shop/homepage.dart';
 import 'package:shop/introscreen.dart';
 import 'package:shop/login.dart';
 import 'package:shop/models/user.dart';
@@ -16,11 +18,31 @@ class Signup extends StatefulWidget {
 }
 
 class _SignupState extends State<Signup> {
+  User? _user;
   bool _agreeToTerms = false;
   TextEditingController _emailController = TextEditingController();
   TextEditingController _usernameController = TextEditingController();
   TextEditingController _passwordController = TextEditingController();
   TextEditingController _confirmpassController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    _initializeFirebase();
+  }
+
+  Future<void> _initializeFirebase() async {
+    await Firebase.initializeApp();
+    User? user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(
+          builder: (context) => HomePage(),
+        ),
+      );
+    }
+  }
+
   Future<void> _signup() async {
     final auth = FirebaseAuth.instance;
     auth.createUserWithEmailAndPassword(
@@ -118,135 +140,139 @@ class _SignupState extends State<Signup> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.white,
-      body: Padding(
-        padding: const EdgeInsets.all(20.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            CustomTextField(
-              prefixIcon: Icons.account_box,
-              hintText: "User Name",
-              controller: _usernameController,
-            ),
-            SizedBox(
-              height: 25,
-            ),
-            CustomTextField(
-              prefixIcon: Icons.mail,
-              hintText: "Email",
-              controller: _emailController,
-            ),
-            SizedBox(
-              height: 25,
-            ),
-            CustomTextField(
-              prefixIcon: Icons.lock_person,
-              hintText: "Password",
-              controller: _passwordController,
-              obscureText: true,
-            ),
-            SizedBox(
-              height: 25,
-            ),
-            CustomTextField(
-              prefixIcon: Icons.lock_person,
-              hintText: "Confirm Password",
-              controller: _confirmpassController,
-              obscureText: true,
-            ),
-            const SizedBox(height: 12),
-            Row(
-              children: [
-                Checkbox(
-                  shape: CircleBorder(),
-                  overlayColor: MaterialStateProperty.resolveWith<Color?>(
-                    (Set<MaterialState> states) {
-                      if (states.contains(MaterialState.selected)) {
+    if (_user != null) {
+      return HomePage();
+    } else {
+      return Scaffold(
+        backgroundColor: Colors.white,
+        body: Padding(
+          padding: const EdgeInsets.all(20.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              CustomTextField(
+                prefixIcon: Icons.account_box,
+                hintText: "User Name",
+                controller: _usernameController,
+              ),
+              SizedBox(
+                height: 25,
+              ),
+              CustomTextField(
+                prefixIcon: Icons.mail,
+                hintText: "Email",
+                controller: _emailController,
+              ),
+              SizedBox(
+                height: 25,
+              ),
+              CustomTextField(
+                prefixIcon: Icons.lock_person,
+                hintText: "Password",
+                controller: _passwordController,
+                obscureText: true,
+              ),
+              SizedBox(
+                height: 25,
+              ),
+              CustomTextField(
+                prefixIcon: Icons.lock_person,
+                hintText: "Confirm Password",
+                controller: _confirmpassController,
+                obscureText: true,
+              ),
+              const SizedBox(height: 12),
+              Row(
+                children: [
+                  Checkbox(
+                    shape: CircleBorder(),
+                    overlayColor: MaterialStateProperty.resolveWith<Color?>(
+                      (Set<MaterialState> states) {
+                        if (states.contains(MaterialState.selected)) {
+                          return Colors.transparent;
+                        }
                         return Colors.transparent;
-                      }
-                      return Colors.transparent;
-                    },
-                  ),
-                  checkColor: Colors.deepOrange,
-                  focusColor: Colors.white,
-                  fillColor: MaterialStateProperty.resolveWith<Color?>(
-                    (Set<MaterialState> states) {
-                      if (states.contains(MaterialState.selected)) {
-                        return Colors.transparent;
-                      }
-                      return Colors.transparent;
-                    },
-                  ),
-                  value: _agreeToTerms,
-                  onChanged: (value) {
-                    setState(() {
-                      _agreeToTerms = value!;
-                    });
-                  },
-                ),
-                Row(
-                  children: [
-                    const Text(
-                      'I agree to the  ',
-                      style:
-                          TextStyle(fontSize: 12, fontWeight: FontWeight.w400),
-                    ),
-                    GestureDetector(
-                      onTap: () {
-                        showDialog(
-                          context: context,
-                          builder: (BuildContext context) =>
-                              _buildPopupDialog(context),
-                        );
                       },
-                      child: const Text(
-                        'Terms and Conditions',
-                        style: TextStyle(
-                            fontSize: 12,
-                            fontWeight: FontWeight.w700,
-                            color: Colors.deepOrange,
-                            decoration: TextDecoration.underline),
-                      ),
                     ),
-                  ],
-                ),
-              ],
-            ),
-            const SizedBox(height: 12),
-            Button(
-                onPressed: _signup,
-                child: Row(
-                  children: [Spacer(), Text('Signup'), Spacer()],
-                )),
-            SizedBox(
-              height: 20,
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
-                  'Already a User?  ',
-                  style: TextStyle(color: Colors.black, fontSize: 12),
-                ),
-                GestureDetector(
-                  onTap: () {
-                    Navigator.push(context,
-                        MaterialPageRoute(builder: (context) => Login()));
-                  },
-                  child: Text('Login',
-                      style: TextStyle(
-                          color: Colors.deepOrange,
-                          fontSize: 14,
-                          fontWeight: FontWeight.bold)),
-                )
-              ],
-            )
-          ],
+                    checkColor: Colors.deepOrange,
+                    focusColor: Colors.white,
+                    fillColor: MaterialStateProperty.resolveWith<Color?>(
+                      (Set<MaterialState> states) {
+                        if (states.contains(MaterialState.selected)) {
+                          return Colors.transparent;
+                        }
+                        return Colors.transparent;
+                      },
+                    ),
+                    value: _agreeToTerms,
+                    onChanged: (value) {
+                      setState(() {
+                        _agreeToTerms = value!;
+                      });
+                    },
+                  ),
+                  Row(
+                    children: [
+                      const Text(
+                        'I agree to the  ',
+                        style: TextStyle(
+                            fontSize: 12, fontWeight: FontWeight.w400),
+                      ),
+                      GestureDetector(
+                        onTap: () {
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context) =>
+                                _buildPopupDialog(context),
+                          );
+                        },
+                        child: const Text(
+                          'Terms and Conditions',
+                          style: TextStyle(
+                              fontSize: 12,
+                              fontWeight: FontWeight.w700,
+                              color: Colors.deepOrange,
+                              decoration: TextDecoration.underline),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+              const SizedBox(height: 12),
+              Button(
+                  onPressed: _signup,
+                  child: Row(
+                    children: [Spacer(), Text('Signup'), Spacer()],
+                  )),
+              SizedBox(
+                height: 20,
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    'Already a User?  ',
+                    style: TextStyle(color: Colors.black, fontSize: 12),
+                  ),
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.push(context,
+                          MaterialPageRoute(builder: (context) => Login()));
+                    },
+                    child: Text('Login',
+                        style: TextStyle(
+                            color: Colors.deepOrange,
+                            fontSize: 14,
+                            fontWeight: FontWeight.bold)),
+                  )
+                ],
+              )
+            ],
+          ),
         ),
-      ),
-    );
+      );
+    }
   }
 
   Widget _buildPopupDialog(BuildContext context) {
